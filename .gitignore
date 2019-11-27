@@ -33,3 +33,6 @@ venv/
 .venv/
 envs/
 .envs/
+
+# IDE's
+.vscode/
