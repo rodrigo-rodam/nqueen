@@ -4,7 +4,7 @@ from web.client import Client
 
 log = logging.getLogger(__name__)
 
-web = Blueprint("client", __name__)
+web = Blueprint("web_client", __name__)
 
 
 @web.route("/", methods=["GET", "POST"])
@@ -43,4 +43,13 @@ def solutions():
 
     return render_template(
         "solutions.html", solutions=solutions, challenge_number=challenge_number
+    )
+
+
+@web.route("/board", methods=["GET"])
+def board():
+    challenge_number = int(request.args.get("challenge_number"))
+    solution = request.args.get("solution")
+    return render_template(
+        "board.html", challenge_number=challenge_number, solution=solution
     )

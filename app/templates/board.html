@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>N-Queen Challenge</title>
+    <style>
+        table {
+            margin: 0 auto;
+            border-collapse: collapse;
+            background: lightyellow;
+        }
+
+        td {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        tr:nth-child(odd) td:nth-child(even),
+        tr:nth-child(even) td:nth-child(odd) {
+            background: darkolivegreen;
+        }
+    </style>
+</head>
+
+<body onload="printsolution('{{solution}}');">
+    <table>
+        <tr>
+            <td colspan="{{challenge_number+1}}"><a href="/solutions?challenge_number={{challenge_number}}">Go back</a>
+                Solution: [{{solution}}]</td>
+        </tr>
+        {%for y in range(0, challenge_number+1)%}
+        {%if y == 0 %}
+        {%for x in range(0, challenge_number+1)%}
+        <td>{{x}}</td>
+        {%endfor%}
+        {%else%}
+        <tr>
+            {%for x in range(0, challenge_number+1)%}
+            {%if x == 0 %}
+            <td width="20px">{{y}}</td>
+            {%else%}
+            <td id="r{{y}}c{{x}}"></td>
+            {%endif%}
+            {%endfor%} </tr>
+        {%endif%}
+        {%endfor%}
+        <tr>
+            <td colspan="{{challenge_number+1}}"><a href="/solutions?challenge_number={{challenge_number}}">Go back</a>
+            </td>
+        </tr>
+    </table>
+</body>
+<script>
+    function printsolution(solution) {
+        console.log(solution)
+        solution_array = solution.split(', ');
+        console.log(solution_array)
+        var i;
+        for (i = 0; i < solution_array.length; i++) {
+            slot = 'r' + (i + 1) + 'c' + solution_array[i];
+            console.log(slot);
+            document.getElementById(slot).innerHTML = "<img width='45' height='45' src='{{url_for('static', filename='queen.png')}}'/>";
+        }
+    }
+</script>
+
+</html>

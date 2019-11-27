@@ -16,7 +16,9 @@
             <b>{{challenge_number}} Queens.</b>:</p>
 
         {%for solution in solutions%}
-        <p>{{solution.solution_array}}</p>
+        <p><a
+                href="/board?challenge_number={{challenge_number}}&solution={{solution.solution_array}}">[{{solution.solution_array}}]</a>
+        </p>
         {%endfor%}
         {%endif%}
     </div>

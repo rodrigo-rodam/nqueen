@@ -4,7 +4,7 @@ from app.restplus import api
 
 
 add_challenge_serializer = api.model(
-    "Add challenge",
+    "Add_challenge",
     {
         "challenge_number": fields.Integer(
             required=True, description="Number of the challenge"
@@ -12,7 +12,7 @@ add_challenge_serializer = api.model(
     },
 )
 add_solution_serializer = api.model(
-    "Add solution",
+    "Add_solution",
     {
         "challenge_number": fields.Integer(
             required=True, description="Number of the challenge"
@@ -22,7 +22,7 @@ add_solution_serializer = api.model(
 )
 
 challenge_model_serializer = api.model(
-    "Challenge Model",
+    "Challenge_model",
     {
         "challenge_number": fields.Integer(
             required=True, description="Number of the challenge"
@@ -37,7 +37,7 @@ challenge_model_serializer = api.model(
 )
 
 solution_model_serializer = api.model(
-    "Solution Model",
+    "Solution_model",
     {
         "challenge_number": fields.Integer(
             required=True, description="Number of the challenge"
