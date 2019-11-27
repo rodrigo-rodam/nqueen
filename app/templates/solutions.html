@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>N-Queen Challenge</title>
+</head>
+
+<body>
+    <h1>
+        <a href="/">Go back</a>
+    </h1>
+    <div>
+        {%if solutions%}
+        <i>(Each position represents a row and each number represents a column)</i>
+        <p>Solutions found for a board size <b>{{challenge_number}}</b> x <b>{{challenge_number}}</b> with
+            <b>{{challenge_number}} Queens.</b>:</p>
+
+        {%for solution in solutions%}
+        <p>{{solution.solution_array}}</p>
+        {%endfor%}
+        {%endif%}
+    </div>
+</body>
+
+</html>

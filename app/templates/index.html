@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>N-Queen Challenge</title>
+</head>
+
+<body>
+    <h1>
+        {{msg}}
+    </h1>
+    <div>
+        {%if challenges%}
+        <p>Solved Challenges:</p>
+        {%for challenge in challenges%}
+        <p>Challenge Number: <b>{{challenge.challenge_number}}</b>, amount of solutions:
+            <b>{{challenge.amount_of_solutions}}</b>, process finnished: <b>{{challenge.finished}}</b><a
+                href="/solutions?challenge_number={{challenge.challenge_number}}">See results</a></p>
+
+        {%endfor%}
+        {%endif%}
+    </div>
+    <form action="." method="POST">
+        Challenge number:
+        <input type="number" id="challenge_number" name="challenge_number" />
+        <input type="submit" value="Create challenge" />
+    </form>
+</body>
+
+</html>

@@ -1,0 +1,19 @@
+api:
+  build: .
+  command: /challenge/app/api.py
+  ports:
+    - "8080:8080"
+  volumes:
+    - .:/challenge
+  links:
+    - db
+
+db:
+  image: postgres
+  environment:
+    POSTGRES_USER: elizabeth
+    POSTGRES_PASSWORD: victoria
+    POSTGRES_DB: nqueen
+  ports:
+      - 5432:5432
+  restart: always
