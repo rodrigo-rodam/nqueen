@@ -22,7 +22,6 @@ def index():
             log.error(e)
             msg = "Challenge not accepted! Sorry."
     else:
-        if 
         msg = "Please insert a number (integer) to create a challenge."
 
     challenges = cli.get_challenges()
