@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nqueen-app
+  labels:
+    app: nqueen
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nqueen
+  template:
+    metadata:
+      labels:
+        app: nqueen
+    spec:
+      containers:
+      - name: nqueen
+        image: nqueenacr.azurecr.io/nqueen:latest  # Você precisará substituir por sua imagem do ACR
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: nqueen-config
+              key: DATABASE_URL
+        - name: FLASK_ENV
+          valueFrom:
+            configMapKeyRef:
+              name: nqueen-config
+              key: FLASK_ENV
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        readinessProbe:
+          httpGet:
+            path: /api/
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /api/
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 10
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nqueen-service
+  labels:
+    app: nqueen
+spec:
+  selector:
+    app: nqueen
+  ports:
+  - port: 80
+    targetPort: 8080
+  type: ClusterIP

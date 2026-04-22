@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nqueen-config
+  labels:
+    app: nqueen
+data:
+  DATABASE_URL: "postgresql://elizabeth:victoria@postgres-service:5432/nqueen"
+  FLASK_ENV: "production"

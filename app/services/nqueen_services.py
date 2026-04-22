@@ -2,7 +2,7 @@ import logging
 import threading
 from time import time
 from random import randint as rand
-from pyeda.inter import *
+# from pyeda.inter import *  # Commented out to avoid dependency issues
 
 from app import app
 from app.services.challenge_services import add_solution, update_challenge
@@ -15,6 +15,8 @@ from app.services.challenge_services import add_solution, update_challenge
 log = logging.getLogger(__name__)
 
 
+"""
+# QueenService_PyEAD commented out due to pyeda dependency issues
 class QueenService_PyEAD:
     def __init__(self, n=8):
         log.info(f"QueenService.__init__(board_size={n})")
@@ -86,6 +88,7 @@ class QueenService_PyEAD:
             if r != (self.board_size - 1):
                 chars.append("\n")
         print("".join(chars))
+"""
 
 
 class QueenService_Genetic:

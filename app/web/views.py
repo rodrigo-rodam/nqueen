@@ -1,6 +1,6 @@
 import logging
 from flask import Blueprint, render_template, request
-from web.client import Client
+from app.web.client import Client
 
 log = logging.getLogger(__name__)
 

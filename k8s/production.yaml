@@ -1,0 +1,148 @@
+# Configuração para ambiente de produção
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nqueen-prod-config
+  labels:
+    app: nqueen
+    environment: production
+data:
+  DATABASE_URL: "postgresql://elizabeth:victoria@postgres-service:5432/nqueen"
+  FLASK_ENV: "production"
+  GUNICORN_WORKERS: "4"
+  GUNICORN_TIMEOUT: "120"
+  GUNICORN_BIND: "0.0.0.0:8080"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nqueen-app-prod
+  labels:
+    app: nqueen
+    environment: production
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: nqueen
+      environment: production
+  template:
+    metadata:
+      labels:
+        app: nqueen
+        environment: production
+    spec:
+      containers:
+      - name: nqueen
+        image: nqueen:latest  # Substitua pela sua imagem do ACR
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: nqueen-prod-config
+              key: DATABASE_URL
+        - name: FLASK_ENV
+          valueFrom:
+            configMapKeyRef:
+              name: nqueen-prod-config
+              key: FLASK_ENV
+        - name: GUNICORN_WORKERS
+          valueFrom:
+            configMapKeyRef:
+              name: nqueen-prod-config
+              key: GUNICORN_WORKERS
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+        readinessProbe:
+          httpGet:
+            path: /api/
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /api/
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nqueen-service-prod
+  labels:
+    app: nqueen
+    environment: production
+spec:
+  selector:
+    app: nqueen
+    environment: production
+  ports:
+  - port: 80
+    targetPort: 8080
+    name: http
+  type: ClusterIP
+
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: nqueen-pdb
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: nqueen
+      environment: production
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: nqueen-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: nqueen-app-prod
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80

@@ -1,10 +1,11 @@
-FROM python:3.9-slim
+# Dockerfile alternativo para evitar problemas de compilação
+FROM python:3.9
 
 LABEL maintainer="Rodrigo Rodam"
 
 WORKDIR /nqueen
 
-# Install system dependencies for psycopg2 and other packages
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
@@ -14,21 +15,21 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first for better caching
-COPY requirements-docker.txt ./requirements.txt
+# Copy requirements and install Python packages
+COPY requirements.txt .
 RUN pip install --upgrade pip
 
-# Install psycopg2-binary instead of psycopg2 to avoid compilation issues
+# Install packages one by one to identify issues easier
+RUN pip install --no-cache-dir gunicorn==20.0.0
 RUN pip install --no-cache-dir psycopg2-binary==2.9.10
+RUN pip install --no-cache-dir Flask==1.1.1
+RUN pip install --no-cache-dir Flask-SQLAlchemy==2.4.1
 
-# Install other requirements
+# Install remaining requirements
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY . .
-
-# Create logs directory
-RUN mkdir -p /nqueen/logs
 
 EXPOSE 8080
 
@@ -36,7 +37,7 @@ EXPOSE 8080
 RUN useradd --create-home --shell /bin/bash app && chown -R app:app /nqueen
 USER app
 
-ENV PYTHONPATH="/.:/nqueen"
+ENV PYTHONPATH "${PYTHONPATH}:.:/nqueen"
 ENV FLASK_ENV=production
 
 ENTRYPOINT ["gunicorn"]
